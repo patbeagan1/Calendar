@@ -17,8 +17,18 @@ function view(state, emit) {
   return html`
     <body class="code lh-copy">
       <main class="pa3 cf center">
-        <h2>Beagan Calendar</h2>
-        <p>Day ${dayOfYear()} of ${d.getFullYear()}</p>
+      <div class="card">
+  <div class="content">
+    <div class="front">
+      Front
+    </div>
+    <div class="back">
+      Back!
+    </div>
+  </div>
+</div>
+        <h2 class="tc">Beagan Calendar</h2>
+        <p class="tc">Day ${dayOfYear()} of ${d.getFullYear()}</p>
         ${calendar()}
         <br>
         <p>${state.totalClicks}</p>
@@ -35,10 +45,14 @@ function view(state, emit) {
 
 const month = (days, monthNum) => {
   let counter = 0
+  let quarterNum = Math.floor((monthNum - 1) / 3)
+  console.log(quarterNum);
   return Array(days).fill(1).map((it) => {
+    const evenQuarterColors = monthNum % 2 == 0 ? "bg-gold" : "bg-yellow";
+    const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue";
     return {
       number: it + counter++,
-      background: monthNum % 2 == 0 ? "bg-gold" : "bg-yellow"
+      background: quarterNum % 2 == 0 ? evenQuarterColors : oddQuarterColors
     }
   })
 }
