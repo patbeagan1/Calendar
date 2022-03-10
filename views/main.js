@@ -1,158 +1,88 @@
-var html = require('choo/html')
+var html = require('choo/html');
+const { default: collect } = require('collect.js');
 
 var TITLE = 'calendar - main'
 
 module.exports = view
 
-function view (state, emit) {
+function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
+
+
+  const d = new Date();
+  const current = d.getTime()
+  const yearStart = new Date(2022, 0)
+  const thisYear = new Date(current - yearStart)
 
   return html`
     <body class="code lh-copy">
       <main class="pa3 cf center">
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>1.</h2>
-          <p>
-            Welcome to your new Choo application.
-            We're very happy you've made it this far.
-          </p>
-
-          <p>
-            You're now in control of your own Choo app. The moment you decide to
-            deploy it, it'll work offline and on any device.
-          </p>
-
-          <br>
-        </section>
-
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>2.</h2>
-
-          <p>
-            We've outfitted your project with a small selection of commands to
-            help you achieve results faster:
-          </p>
-
-          <ul>
-            <li class="mb3">
-              <strong>npm start</strong><br>
-              start your project for local development.
-            </li>
-            <li class="mb3">
-              <strong>npm run build</strong><br>
-              compile your project for production.
-            </li>
-            <li class="mb3">
-              <strong>npm run inspect</strong><br>
-              visualize your project's dependencies.
-            </li>
-            <li class="mb3">
-              <strong>npm run create</strong><br>
-              scaffold a new file.
-            </li>
-          </ul>
-
-          <br>
-        </section>
-
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>3.</h2>
-
-          <p>
-            Your project also comes with a few directories. These names have
-            special meanings for the build tool, so it's good to know what they
-            do.
-          </p>
-
-          <ul>
-            <li class="mb3">
-              <strong>assets/</strong><br>
-              Static files that can be served up, such as images and fonts.
-            </li>
-            <li class="mb3">
-              <strong>components/</strong><br>
-              Reusable fragments that can be composed into views.
-            </li>
-            <li class="mb3">
-              <strong>stores/</strong><br>
-              Pieces of logic that are shared by multiple components.
-            </li>
-            <li class="mb3">
-              <strong>views/</strong><br>
-              Combinations of components that are mapped to routes.
-            </li>
-          </ul>
-
-          <br>
-        </section>
-
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>4.</h2>
-
-          <p>
-            So far we've provided you with one base view, <a
-            href="/oh-no">one fallback view</a>, and one store. This serves
-            as an example. A place to start from. It's your project now, so
-            go ahead and delete them once you know how they work.
-          </p>
-
-          <p>Number of clicks stored: ${state.totalClicks}</p>
-
-          <button class="dim ph3 ba bw1 pv2 b--black pointer bg-white"
-            onclick=${handleClick}>
-            Emit a click event
-          </button>
-
-          <br><br>
-        </section>
-
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>5.</h2>
-
-          <p>
-            To make your development journey more pleasant, we've also
-            included <a
-            href="https://github.com/choojs/choo-devtools">devtools</a>. If
-            you open your browser console, here's a selection of the
-            commands that are at your disposal:
-
-            <ul>
-              <li class="mb3">
-                <strong>choo.state</strong><br>
-                Log the current application state.
-              </li>
-              <li class="mb3">
-                <strong>choo.log</strong><br>
-                Log the last 150 events received by the event bus.
-              </li>
-              <li class="mb3">
-                <strong>choo.emit</strong><br>
-                Emit an event inside the application event bus.
-              </li>
-              <li class="mb3">
-                <strong>choo.help</strong><br>
-                See an overview of all available commands.
-              </li>
-            </ul>
-          </p>
-        </section>
-
-        <section class="fl mw6 w-50-m w-third-l pa3">
-          <h2>6.</h2>
-
-          <p>
-            And that's about it! Thanks for reading. If you have any
-            questions, check out the <a  href="https://choo.io">docs</a> or reach
-            out on <a href="https://github.com/choojs/choo">GitHub</a> or <a
-            href="https://www.irccloud.com/irc/freenode/channel/choo">IRC</a>.
-            We're online everyday, and always around to help. Happy hacking!
-          </p>
-        </section>
+        <h2>Beagan Calendar</h2>
+        <p>Day ${dayOfYear()} of ${d.getFullYear()}</p>
+        ${calendar()}
+        <br>
+        <p>${state.totalClicks}</p>
+        <button onclick=${handleClick}>test</button>
       </main>
     </body>
   `
 
-  function handleClick () {
+  function handleClick() {
     emit('clicks:add', 1)
   }
+
 }
+
+const month = (days, monthNum) => {
+  let counter = 0
+  return Array(days).fill(1).map((it) => {
+    return {
+      number: it + counter++,
+      background: monthNum % 2 == 0 ? "bg-gold" : "bg-yellow"
+    }
+  })
+}
+
+const dayOfYear = () => {
+  var now = new Date();
+  var start = new Date(now.getFullYear(), 0, 0);
+  var diff = now - start;
+  var oneDay = 1000 * 60 * 60 * 24;
+  var day = Math.floor(diff / oneDay);
+  return day
+}
+
+const year = [
+  month(31, 1),
+  month(30, 2),
+  month(30, 3),
+  month(31, 4),
+  month(30, 5),
+  month(30, 6),
+  month(31, 7),
+  month(30, 8),
+  month(30, 9),
+  month(31, 10),
+  month(30, 11),
+  month(30, 12),
+].flat()
+
+year[dayOfYear()].background = "bg-red"
+const weeks = collect(year).chunk(7).all();
+
+(() => {
+  let count = 1
+  weeks.forEach((it) => {
+    it.weekNum = count++
+  })
+})()
+
+const weeknumComponent = (weekNum) => html`<td class='pa3'>${weekNum}</td>`
+const calendar = () => html`<table class="center">${weeks.map((it) => { return row(it.weekNum, it.items) })}</table>`
+const row = (weekNum, days) => html`<tr>
+${weeknumComponent(weekNum)}
+${calRow(days)}
+</tr>`
+const calRow = (calText) => calText.map((it) => html`<td class="ba pa3 tc ${it.background}">${calendarDay(it)}</td>`)
+const calendarDay = (number) => html`<div class="center tc">${number.number}</div>`
+
