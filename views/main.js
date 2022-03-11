@@ -51,7 +51,7 @@ const month = (days, monthNum) => {
   let quarterNum = Math.floor((monthNum - 1) / 3)
   console.log(quarterNum)
   return Array(days).fill(1).map((it) => {
-    const evenQuarterColors = monthNum % 2 == 0 ? "bg-gold" : "bg-yellow"
+    const evenQuarterColors = monthNum % 2 == 0 ? "bg-yellow" : "bg-light-yellow"
     const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue"
     return {
       number: it + counter++,
@@ -80,6 +80,23 @@ const year = [
   month(30, 12),
 ].flat()
 
+const toMonthName = (monthNum) => {
+  switch (monthNum) {
+    case 0: return "Jan"
+    case 1: return "Feb"
+    case 2: return "Mar"
+    case 3: return "Apr"
+    case 4: return "May"
+    case 5: return "Jun"
+    case 6: return "Jul"
+    case 7: return "Aug"
+    case 8: return "Sept"
+    case 9: return "Oct"
+    case 10: return "Nov"
+    case 11: return "Dec"
+  }
+}
+
 const now = new Date()
 year.forEach((element, index) => {
   if ((index - 20) % 28 == 0) {
@@ -93,17 +110,14 @@ year.forEach((element, index) => {
     element.emoji = "🎉"
   }
 
-  const d = dateFromDay(now.getFullYear(), index)
+  const d = dateFromDay(now.getFullYear(), index + 1)
 
-  element.gregorian = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
-    d.getHours() + ":" + d.getMinutes();
+  element.gregorian = html`${toMonthName(d.getMonth())}<br>${d.getDate()}`
 })
 
 year[dayOfYear()].background = "bg-red"
 
-
-const newLocal = collect(year).chunk(7)
-const weeks = newLocal.all()
+const weeks = collect(year).chunk(7).all();
 
 (() => {
   let count = 1
@@ -119,25 +133,21 @@ ${weeknumComponent(weekNum)}
 ${calRow(days)}
 </tr>`
 const calRow = (element) => element.map((it) => html`<td class="tc">${calendarDay(it)}</td>`)
-const calendarDay = (element) => {
-  console.log(element.image)
-  return html`
+const calendarDay = (element) => html`
 <div class="card">
   <div class="content ba ${element.background}">
     <div class="front hideback clip-content">
       <div class="center tc">${element.number}</div>
       ${element.image
-      ? html`<img class="w-100 hideback" src=${element.image}/>`
-      : null}
+    ? html`<img class="w-100 hideback" src=${element.image}/>`
+    : null}
       ${element.emoji
-      ? html`<div class="bg-yellow br-pill">${element.emoji}</div>`
-      : null}
+    ? html`<div class="bg-yellow br-pill">${element.emoji}</div>`
+    : null}
     </div>
     <div class="back">
       <div class="center tc">${element.gregorian}</div>
-      <div class="center tc">${element.number}</div>
     </div>
   </div>
 </div>`
-}
 
