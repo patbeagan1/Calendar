@@ -15,18 +15,8 @@ function view(state, emit) {
   const thisYear = new Date(current - yearStart)
 
   return html`
-    <body class="code lh-copy">
+    <body class="code lh-copy bg-washed-blue">
       <main class="pa3 cf center">
-      <div class="card">
-  <div class="content">
-    <div class="front">
-      Front
-    </div>
-    <div class="back">
-      Back!
-    </div>
-  </div>
-</div>
         <h2 class="tc">Beagan Calendar</h2>
         <p class="tc">Day ${dayOfYear()} of ${d.getFullYear()}</p>
         ${calendar()}
@@ -52,7 +42,9 @@ const month = (days, monthNum) => {
     const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue";
     return {
       number: it + counter++,
-      background: quarterNum % 2 == 0 ? evenQuarterColors : oddQuarterColors
+      background: quarterNum % 2 == 0 ? evenQuarterColors : oddQuarterColors,
+      quarter: quarterNum,
+      month: monthNum
     }
   })
 }
@@ -81,7 +73,19 @@ const year = [
   month(30, 12),
 ].flat()
 
+year.forEach((element, index) => {
+  if ((index - 20) % 28 == 0) {
+    element.background = "bg-light-gray"
+  }
+  const holidayFirst = Math.floor((element.month + 1) % 3) == 0 && (element.number == 1);
+  const holidaySolar = Math.floor((element.month + 3) % 3) == 0 && (element.number == 20);
+  if (holidayFirst || holidaySolar) {
+    element.background = "bg-light-purple"
+  }
+});
+
 year[dayOfYear()].background = "bg-red"
+
 const weeks = collect(year).chunk(7).all();
 
 (() => {
@@ -97,6 +101,17 @@ const row = (weekNum, days) => html`<tr>
 ${weeknumComponent(weekNum)}
 ${calRow(days)}
 </tr>`
-const calRow = (calText) => calText.map((it) => html`<td class="ba pa3 tc ${it.background}">${calendarDay(it)}</td>`)
-const calendarDay = (number) => html`<div class="center tc">${number.number}</div>`
+const calRow = (element) => element.map((it) => html`<td class="tc">${calendarDay(it)}</td>`)
+const calendarDay = (element) => html`
+<div class="card">
+  <div class="content ba ${element.background}">
+    <div class="front">
+      <div class="center tc">${element.number}</div>
+    </div>
+    <div class="back">
+      <div class="center tc">${element.number}</div>
+      <div class="center tc">${element.number}</div>
+    </div>
+  </div>
+</div>`
 
