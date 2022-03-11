@@ -1,5 +1,5 @@
-var html = require('choo/html');
-const { default: collect } = require('collect.js');
+var html = require('choo/html')
+const { default: collect } = require('collect.js')
 
 var TITLE = 'calendar - main'
 
@@ -9,7 +9,7 @@ function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
 
-  const d = new Date();
+  const d = new Date()
   const current = d.getTime()
   const yearStart = new Date(2022, 0)
   const thisYear = new Date(current - yearStart)
@@ -30,32 +30,39 @@ function view(state, emit) {
   function handleClick() {
     emit('clicks:add', 1)
   }
+}
 
+const dayOfYear = () => {
+  var now = new Date()
+  var start = new Date(now.getFullYear(), 0, 0)
+  var diff = now - start
+  var oneDay = 1000 * 60 * 60 * 24
+  var day = Math.floor(diff / oneDay)
+  return day
+}
+
+function dateFromDay(year, day) {
+  var date = new Date(year, 0)
+  return new Date(date.setDate(day))
 }
 
 const month = (days, monthNum) => {
   let counter = 0
   let quarterNum = Math.floor((monthNum - 1) / 3)
-  console.log(quarterNum);
+  console.log(quarterNum)
   return Array(days).fill(1).map((it) => {
-    const evenQuarterColors = monthNum % 2 == 0 ? "bg-gold" : "bg-yellow";
-    const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue";
+    const evenQuarterColors = monthNum % 2 == 0 ? "bg-gold" : "bg-yellow"
+    const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue"
     return {
       number: it + counter++,
       background: quarterNum % 2 == 0 ? evenQuarterColors : oddQuarterColors,
       quarter: quarterNum,
-      month: monthNum
+      month: monthNum,
+      gregorian: "",
+      image: "",
+      emoji: ""
     }
   })
-}
-
-const dayOfYear = () => {
-  var now = new Date();
-  var start = new Date(now.getFullYear(), 0, 0);
-  var diff = now - start;
-  var oneDay = 1000 * 60 * 60 * 24;
-  var day = Math.floor(diff / oneDay);
-  return day
 }
 
 const year = [
@@ -73,20 +80,30 @@ const year = [
   month(30, 12),
 ].flat()
 
+const now = new Date()
 year.forEach((element, index) => {
   if ((index - 20) % 28 == 0) {
     element.background = "bg-light-gray"
+    element.image = "/assets/michael-G9bDsVeHM7I-unsplash.png"
   }
-  const holidayFirst = Math.floor((element.month + 1) % 3) == 0 && (element.number == 1);
-  const holidaySolar = Math.floor((element.month + 3) % 3) == 0 && (element.number == 20);
+  const holidayFirst = Math.floor((element.month + 1) % 3) == 0 && (element.number == 1)
+  const holidaySolar = Math.floor((element.month + 3) % 3) == 0 && (element.number == 20)
   if (holidayFirst || holidaySolar) {
     element.background = "bg-light-purple"
+    element.emoji = "🎉"
   }
-});
+
+  const d = dateFromDay(now.getFullYear(), index)
+
+  element.gregorian = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+    d.getHours() + ":" + d.getMinutes();
+})
 
 year[dayOfYear()].background = "bg-red"
 
-const weeks = collect(year).chunk(7).all();
+
+const newLocal = collect(year).chunk(7)
+const weeks = newLocal.all()
 
 (() => {
   let count = 1
@@ -102,16 +119,25 @@ ${weeknumComponent(weekNum)}
 ${calRow(days)}
 </tr>`
 const calRow = (element) => element.map((it) => html`<td class="tc">${calendarDay(it)}</td>`)
-const calendarDay = (element) => html`
+const calendarDay = (element) => {
+  console.log(element.image)
+  return html`
 <div class="card">
   <div class="content ba ${element.background}">
-    <div class="front">
+    <div class="front hideback clip-content">
       <div class="center tc">${element.number}</div>
+      ${element.image
+      ? html`<img class="w-100 hideback" src=${element.image}/>`
+      : null}
+      ${element.emoji
+      ? html`<div class="bg-yellow br-pill">${element.emoji}</div>`
+      : null}
     </div>
     <div class="back">
-      <div class="center tc">${element.number}</div>
+      <div class="center tc">${element.gregorian}</div>
       <div class="center tc">${element.number}</div>
     </div>
   </div>
 </div>`
+}
 
