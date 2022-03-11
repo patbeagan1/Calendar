@@ -5,9 +5,16 @@ var TITLE = 'calendar - main'
 
 module.exports = view
 
-const now = new Date(2024, 7)
+const now = new Date(2024, 4)
 const yearStart = new Date(now.getFullYear(), 0)
 
+const dayOfYear = () => {
+  var diff = now - yearStart
+  var oneDay = 1000 * 60 * 60 * 24
+  var day = Math.floor(diff / oneDay)
+  return day
+}
+const dayOfYearDisplay = dayOfYear() + 1
 const leapYear = (year) => ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
 
 function view(state, emit) {
@@ -17,7 +24,7 @@ function view(state, emit) {
     <body class="code lh-copy bg-washed-blue">
       <main class="pa3 cf center">
         <h2 class="tc">Beagan Calendar</h2>
-        <p class="tc">Day ${dayOfYear()} of ${now.getFullYear()}</p>
+        <p class="tc">Day ${dayOfYearDisplay} of ${now.getFullYear()}</p>
         ${calendar()}
         <br>
         <p>${state.totalClicks}</p>
@@ -31,12 +38,6 @@ function view(state, emit) {
   }
 }
 
-const dayOfYear = () => {
-  var diff = now - yearStart
-  var oneDay = 1000 * 60 * 60 * 24
-  var day = Math.floor(diff / oneDay)
-  return day
-}
 
 function dateFromDay(year, day) {
   var date = new Date(year, 0)
