@@ -5,20 +5,19 @@ var TITLE = 'calendar - main'
 
 module.exports = view
 
+const now = new Date(2024, 7)
+const yearStart = new Date(now.getFullYear(), 0)
+
+const leapYear = (year) => ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
+
 function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-
-
-  const d = new Date()
-  const current = d.getTime()
-  const yearStart = new Date(2022, 0)
-  const thisYear = new Date(current - yearStart)
 
   return html`
     <body class="code lh-copy bg-washed-blue">
       <main class="pa3 cf center">
         <h2 class="tc">Beagan Calendar</h2>
-        <p class="tc">Day ${dayOfYear()} of ${d.getFullYear()}</p>
+        <p class="tc">Day ${dayOfYear()} of ${now.getFullYear()}</p>
         ${calendar()}
         <br>
         <p>${state.totalClicks}</p>
@@ -33,9 +32,7 @@ function view(state, emit) {
 }
 
 const dayOfYear = () => {
-  var now = new Date()
-  var start = new Date(now.getFullYear(), 0, 0)
-  var diff = now - start
+  var diff = now - yearStart
   var oneDay = 1000 * 60 * 60 * 24
   var day = Math.floor(diff / oneDay)
   return day
@@ -71,13 +68,13 @@ const year = [
   month(30, 3),
   month(31, 4),
   month(30, 5),
-  month(30, 6),
+  month(leapYear(now.getFullYear()) ? 31 : 30, 6),
   month(31, 7),
   month(30, 8),
   month(30, 9),
   month(31, 10),
   month(30, 11),
-  month(30, 12),
+  month(31, 12),
 ].flat()
 
 const toMonthName = (monthNum) => {
@@ -94,10 +91,10 @@ const toMonthName = (monthNum) => {
     case 9: return "Oct"
     case 10: return "Nov"
     case 11: return "Dec"
+    default: return "---"
   }
 }
 
-const now = new Date()
 year.forEach((element, index) => {
   if ((index - 20) % 28 == 0) {
     element.background = "bg-light-gray"
@@ -117,7 +114,7 @@ year.forEach((element, index) => {
 
 year[dayOfYear()].background = "bg-red"
 
-const weeks = collect(year).chunk(7).all();
+const weeks = getWeeksFrom(year);
 
 (() => {
   let count = 1
@@ -127,7 +124,7 @@ const weeks = collect(year).chunk(7).all();
 })()
 
 const weeknumComponent = (weekNum) => html`<td class='pa3'>${weekNum}</td>`
-const calendar = () => html`<table class="center">${weeks.map((it) => { return row(it.weekNum, it.items) })}</table>`
+const calendar = () => html`<table class="center">${weeks.map((it) => { return row(it.weekNum, it) })}</table>`
 const row = (weekNum, days) => html`<tr>
 ${weeknumComponent(weekNum)}
 ${calRow(days)}
@@ -150,4 +147,22 @@ const calendarDay = (element) => html`
     </div>
   </div>
 </div>`
+
+function getWeeksFrom(year) {
+  let allWeeks = []
+  let thisWeek = []
+  const longWeeks = [52]
+  if (leapYear(now.getFullYear())) {
+    longWeeks.push(26)
+  }
+  year.forEach(element => {
+    thisWeek.push(element)
+    const weekLength = longWeeks.includes(allWeeks.length + 1) ? 8 : 7
+    if (thisWeek.length == weekLength) {
+      allWeeks.push(thisWeek)
+      thisWeek = []
+    }
+  });
+  return allWeeks
+}
 
