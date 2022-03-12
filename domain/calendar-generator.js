@@ -38,13 +38,41 @@ const yearDays = [
 ].flat()
 
 yearDays.forEach((element, index) => {
+    const leapYearOffset = leapYear(now.getFullYear())
+        ? index < 183
+            ? 0
+            : 1
+        : 0
     markMoonDays()
     markHolidays()
+    applyHolidayDecoration()
     applyGregorianDate()
+
 
     function applyGregorianDate() {
         const d = dateFromDay(now.getFullYear(), index + 1)
         element.gregorian = html`${toMonthName(d.getMonth())}<br>${d.getDate()}`
+    }
+
+    function applyHolidayDecoration() {
+        switch (index + 1 - leapYearOffset) {
+            case 32: element.emoji = "🕯"
+                break
+            case 81: element.emoji = "🐇"
+                break
+            case 123: element.emoji = "🔥"
+                break
+            case 172: element.emoji = "🌱"
+                break
+            case 214: element.emoji = "🛠"
+                break
+            case 263: element.emoji = "🍲"
+                break
+            case 305: element.emoji = "🎃"
+                break
+            case 354: element.emoji = "🎄"
+                break
+        }
     }
 
     function markHolidays() {
@@ -58,12 +86,8 @@ yearDays.forEach((element, index) => {
 
     function markMoonDays() {
         const isMoonDayNormalYear = (index - 20) % 28 == 0
-        let isMoonDayLeapYear
-        if (index < 183) {
-            isMoonDayLeapYear = (index - 20) % 28 == 0
-        } else {
-            isMoonDayLeapYear = (index - 21) % 28 == 0
-        }
+        const moonDayOffset = index < 183 ? 20 : 21
+        const isMoonDayLeapYear = (index - moonDayOffset) % 28 == 0
 
         if (leapYear(now.getFullYear()) ? isMoonDayLeapYear : isMoonDayNormalYear) {
             element.background = "bg-light-gray"
