@@ -13,7 +13,6 @@
   "dependencies": {
     "choo": "^7.1.0",
     "choo-service-worker": "^3.0.0",
-    "collect.js": "^4.31.3",
     "sheetify": "^8.0.0",
     "tachyons": "^4.12.0"
   },
