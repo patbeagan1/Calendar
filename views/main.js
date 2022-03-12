@@ -1,7 +1,7 @@
 var html = require('choo/html')
-const { dayOfYear } = require("../util/util")
-const { now, yearStart } = require("../util/time")
-const { year, weeks } = require("../util/calendar-generator")
+const { dayOfYear } = require("../domain/util")
+const { now, yearStart } = require("../domain/time")
+const { weeks } = require("../domain/calendar-generator")
 
 var TITLE = 'calendar - main'
 
@@ -17,7 +17,7 @@ function view(state, emit) {
       <main class="pa3 cf center">
         <h2 class="tc">Beagan Calendar</h2>
         <p class="tc">Day ${dayOfYearDisplay} of ${now.getFullYear()}</p>
-        ${calendar()}
+        <table class="center">${weeks.map((it) => row(it.weekNum, it))}</table>
         <br>
         <p>${state.totalClicks}</p>
         <button onclick=${handleClick}>test</button>
@@ -30,7 +30,6 @@ function view(state, emit) {
   }
 }
 
-const calendar = () => html`<table class="center">${weeks.map((it) => { return row(it.weekNum, it) })}</table>`
 
 const row = (weekNum, days) => html`
   <tr>

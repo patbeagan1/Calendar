@@ -1,19 +1,17 @@
-const leapYear = (year) => {
-    return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
-}
-
-module.exports = {
+class Util {
     dayOfYear(yearStart, now) {
         var diff = now - yearStart
         var oneDay = 1000 * 60 * 60 * 24
         var day = Math.floor(diff / oneDay)
         return day
-    },
+    }
     dateFromDay(year, day) {
         var date = new Date(year, 0)
         return new Date(date.setDate(day))
-    },
-    leapYear,
+    }
+    leapYear(year) {
+        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
+    }
     getWeeksFrom(year, isLeapYear) {
         let allWeeks = []
         let thisWeek = []
@@ -30,7 +28,7 @@ module.exports = {
             }
         });
         return allWeeks
-    },
+    }
     toMonthName(monthNum) {
         switch (monthNum) {
             case 0: return "Jan"
@@ -49,3 +47,5 @@ module.exports = {
         }
     }
 }
+
+module.exports = new Util()
