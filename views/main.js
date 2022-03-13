@@ -5,7 +5,6 @@ var TITLE = 'calendar - main'
 
 module.exports = view
 
-
 function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
@@ -31,18 +30,33 @@ const row = (weekNum, days) => html`
   ${days.map((it) => html`<td class="tc">${calendarDay(it)}</td>`)}
   </tr>
 `
+const maybeImage = (element) => !element.image ? null : html`
+    <div class="center tc">${element.number}</div>
+    <img class="w-100 hideback" src=${element.image}/>`
+
+const maybeEmoji = (element) => {
+  return !element.emoji ? null : html`
+  <div class="center-absolute tc">${element.number}</div>
+  <div class="f2">${element.emoji}</div>`
+}
+
+const content = (element) => {
+  const image = maybeImage(element)
+  const emoji = maybeEmoji(element)
+  if (image) {
+    return image
+  }
+  if (emoji) {
+    return emoji
+  }
+  return html`<div class="center tc">${element.number}</div>`
+}
 
 const calendarDay = (element) => html`
 <div class="card">
   <div class="content ba ${element.background}">
     <div class="front hideback clip-content">
-      <div class="center tc">${element.number}</div>
-      ${element.image
-    ? html`<img class="w-100 hideback" src=${element.image}/>`
-    : null}
-      ${element.emoji
-    ? html`<div class="bg-yellow br-pill">${element.emoji}</div>`
-    : null}
+      ${content(element)}
     </div>
     <div class="back">
       <div class="center tc">${element.gregorian}</div>
