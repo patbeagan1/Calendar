@@ -4,6 +4,7 @@ const { dayOfYear, dateFromDay, getWeeksFrom, toMonthName, leapYear } = require(
 const { now, yearStart } = require("./time")
 
 class CalendarGenerator {
+    
     constructor() {
         this.yearDays = [
             this.month(31, 1),
@@ -27,7 +28,7 @@ class CalendarGenerator {
                     : 1
                 : 0
             this.markMoonDays(element, index)
-            this.markHolidays(element, index)
+            this.markHolidays(element)
             this.applyHolidayDecoration(element, index, leapYearOffset)
             this.applyGregorianDate(element, index)
         })
@@ -36,10 +37,10 @@ class CalendarGenerator {
 
         this.weeks = this.loadWeeks()
     }
+
     month(days, monthNum) {
         let counter = 0
         let quarterNum = Math.floor((monthNum - 1) / 3)
-        console.log(quarterNum)
         return Array(days).fill(1).map((it) => {
             const evenQuarterColors = monthNum % 2 == 0 ? "bg-yellow" : "bg-light-yellow"
             const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue"
@@ -81,7 +82,7 @@ class CalendarGenerator {
         }
     }
 
-    markHolidays(element, index) {
+    markHolidays(element) {
         const holidayFirst = Math.floor((element.month + 1) % 3) == 0 && (element.number == 1)
         const holidaySolar = Math.floor((element.month + 3) % 3) == 0 && (element.number == 20)
         if (holidayFirst || holidaySolar) {
@@ -101,7 +102,7 @@ class CalendarGenerator {
         }
     }
 
-    loadWeeks(element, index) {
+    loadWeeks() {
         const weeks = getWeeksFrom(this.yearDays, leapYear(now.getFullYear()));
 
         (() => {
@@ -110,7 +111,6 @@ class CalendarGenerator {
                 it.weekNum = count++
             })
         })()
-        debugger
         return weeks
     }
 }

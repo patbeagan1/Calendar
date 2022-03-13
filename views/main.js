@@ -1,33 +1,27 @@
 var html = require('choo/html')
 const { dayOfYear } = require("../domain/date-manager")
-const { now, yearStart } = require("../domain/time")
-const weeks = require("../domain/calendar-generator")
 
 var TITLE = 'calendar - main'
 
 module.exports = view
 
-const dayOfYearDisplay = dayOfYear(yearStart, now) + 1
 
 function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
+  const dayOfYearDisplay = dayOfYear(state.yearStart, state.now) + 1
   return html`
     <body class="code lh-copy bg-washed-blue">
       <main class="pa3 cf center">
         <h2 class="tc">Beagan Calendar</h2>
-        <p class="tc">Day ${dayOfYearDisplay} of ${now.getFullYear()}</p>
-        <table class="center">${weeks.map((it) => row(it.weekNum, it))}</table>
+        <p class="tc">Day ${dayOfYearDisplay} of ${state.now.getFullYear()}</p>
+        <table class="center">${state.weeks.map((it) => row(it.weekNum, it))}</table>
         <br>
         <p>${state.totalClicks}</p>
-        <button onclick=${handleClick}>test</button>
+        <button onclick=${() => { emit('clicks:add', 1) }}>test</button>
       </main>
     </body>
   `
-
-  function handleClick() {
-    emit('clicks:add', 1)
-  }
 }
 
 
