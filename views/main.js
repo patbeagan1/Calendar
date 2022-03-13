@@ -1,7 +1,7 @@
 var html = require('choo/html')
-const { dayOfYear } = require("../domain/util")
+const { dayOfYear } = require("../domain/date-manager")
 const { now, yearStart } = require("../domain/time")
-const { weeks } = require("../domain/calendar-generator")
+const weeks = require("../domain/calendar-generator")
 
 var TITLE = 'calendar - main'
 

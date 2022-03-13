@@ -1,4 +1,4 @@
-class Util {
+class DateManager {
     dayOfYear(yearStart, now) {
         var diff = now - yearStart
         var oneDay = 1000 * 60 * 60 * 24
@@ -48,4 +48,4 @@ class Util {
     }
 }
 
-module.exports = new Util()
+module.exports = new DateManager()
