@@ -36,7 +36,7 @@ const maybeImage = (element) => !element.image ? null : html`
 
 const maybeEmoji = (element) => {
   return !element.emoji ? null : html`
-  <div class="center-absolute tc">${element.number}</div>
+  <div class="absolute tc">${element.number}</div>
   <div class="f2">${element.emoji}</div>`
 }
 

@@ -4,7 +4,7 @@ const { dayOfYear, dateFromDay, getWeeksFrom, toMonthName, leapYear } = require(
 const { now, yearStart } = require("./time")
 
 class CalendarGenerator {
-    
+
     constructor() {
         this.yearDays = [
             this.month(31, 1),
@@ -42,8 +42,8 @@ class CalendarGenerator {
         let counter = 0
         let quarterNum = Math.floor((monthNum - 1) / 3)
         return Array(days).fill(1).map((it) => {
-            const evenQuarterColors = monthNum % 2 == 0 ? "bg-yellow" : "bg-light-yellow"
-            const oddQuarterColors = monthNum % 2 == 0 ? "bg-light-blue" : "bg-lightest-blue"
+            const evenQuarterColors = monthNum % 2 == 0 ? "bg-quarter-even-dark" : "bg-quarter-even-light"
+            const oddQuarterColors = monthNum % 2 == 0 ? "bg-quarter-odd-dark" : "bg-quarter-odd-light"
             return {
                 number: it + counter++,
                 background: quarterNum % 2 == 0 ? evenQuarterColors : oddQuarterColors,
@@ -63,7 +63,7 @@ class CalendarGenerator {
 
     applyHolidayDecoration(element, index, leapYearOffset) {
         switch (index + 1 - leapYearOffset) {
-            case 32: element.emoji = "🕯"
+            case 32: element.emoji = "🕯️"
                 break
             case 81: element.emoji = "🐇"
                 break
@@ -86,7 +86,7 @@ class CalendarGenerator {
         const holidayFirst = Math.floor((element.month + 1) % 3) == 0 && (element.number == 1)
         const holidaySolar = Math.floor((element.month + 3) % 3) == 0 && (element.number == 20)
         if (holidayFirst || holidaySolar) {
-            element.background = "bg-light-purple"
+            element.background = "bg-white"
             element.emoji = "🎉"
         }
     }
