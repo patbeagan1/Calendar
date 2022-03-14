@@ -98,7 +98,7 @@ class CalendarGenerator {
 
         if (leapYear(now.getFullYear()) ? isMoonDayLeapYear : isMoonDayNormalYear) {
             element.background = "bg-light-gray"
-            element.image = "/assets/michael-G9bDsVeHM7I-unsplash.png"
+            element.image = "http://pbeagan.co.uk/calendar/assets/michael-G9bDsVeHM7I-unsplash.png"
         }
     }
 

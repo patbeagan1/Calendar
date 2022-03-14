@@ -15,9 +15,6 @@ function view(state, emit) {
         <h2 class="tc">Beagan Calendar</h2>
         <p class="tc">Day ${dayOfYearDisplay} of ${state.now.getFullYear()}</p>
         <table class="center">${state.weeks.map((it) => row(it.weekNum, it))}</table>
-        <br>
-        <p>${state.totalClicks}</p>
-        <button onclick=${() => { emit('clicks:add', 1) }}>test</button>
       </main>
     </body>
   `
