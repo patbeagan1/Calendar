@@ -1,5 +1,4 @@
-const { now, yearStart } = require("../domain/time")
-const weeks = require("../domain/calendar-generator")
+const weekFactory = require("../domain/calendar-generator")
 
 module.exports = function (state, emitter) {
   loadInitialState(state)
@@ -10,10 +9,13 @@ module.exports = function (state, emitter) {
     })
   })
 }
+
+const now = new Date()//(2024, 6)
+const yearStart = new Date(now.getFullYear(), 0)
 function loadInitialState(state) {
-  state.totalClicks = 0
-  state.weeks = weeks
   state.now = now
   state.yearStart = yearStart
+  state.totalClicks = 0
+  state.weeks = weekFactory(now, yearStart)
 }
 

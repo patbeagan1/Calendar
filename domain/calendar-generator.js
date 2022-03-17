@@ -1,11 +1,10 @@
 var html = require('choo/html')
 
 const { dayOfYear, dateFromDay, getWeeksFrom, toMonthName, leapYear } = require("./date-manager")
-const { now, yearStart } = require("./time")
 
 class CalendarGenerator {
 
-    constructor() {
+    constructor(now, yearStart) {
         this.yearDays = [
             this.month(31, 1),
             this.month(30, 2),
@@ -27,15 +26,15 @@ class CalendarGenerator {
                     ? 0
                     : 1
                 : 0
-            this.markMoonDays(element, index)
-            this.markHolidays(element)
+            this.markMoonDays(now, element, index)
+            this.markHolidays(now, element)
             this.applyHolidayDecoration(element, index, leapYearOffset)
-            this.applyGregorianDate(element, index)
+            this.applyGregorianDate(now, element, index)
         })
 
         this.yearDays[dayOfYear(yearStart, now)].background = "bg-red"
 
-        this.weeks = this.loadWeeks()
+        this.weeks = this.loadWeeks(now)
     }
 
     month(days, monthNum) {
@@ -56,7 +55,7 @@ class CalendarGenerator {
         })
     }
 
-    applyGregorianDate(element, index) {
+    applyGregorianDate(now, element, index) {
         const d = dateFromDay(now.getFullYear(), index + 1)
         element.gregorian = html`${toMonthName(d.getMonth())}<br>${d.getDate()}`
     }
@@ -91,7 +90,7 @@ class CalendarGenerator {
         }
     }
 
-    markMoonDays(element, index) {
+    markMoonDays(now, element, index) {
         const isMoonDayNormalYear = (index - 20) % 28 == 0
         const moonDayOffset = index < 183 ? 20 : 21
         const isMoonDayLeapYear = (index - moonDayOffset) % 28 == 0
@@ -102,9 +101,8 @@ class CalendarGenerator {
         }
     }
 
-    loadWeeks() {
+    loadWeeks(now) {
         const weeks = getWeeksFrom(this.yearDays, leapYear(now.getFullYear()));
-
         (() => {
             let count = 1
             weeks.forEach((it) => {
@@ -115,4 +113,7 @@ class CalendarGenerator {
     }
 }
 
-module.exports = new CalendarGenerator().weeks
+module.exports = (now, yearStart) => {
+    const calendar = new CalendarGenerator(now, yearStart)
+    return calendar.weeks
+}
