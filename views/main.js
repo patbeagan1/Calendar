@@ -9,11 +9,12 @@ function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   const dayOfYearDisplay = dayOfYear(state.yearStart, state.now) + 1
+  const percentOfTheDay = (state.now.getHours() * 60 * 60 + state.now.getMinutes() * 60 + state.now.getSeconds()) / 86400
   return html`
     <body class="code lh-copy bg-washed-blue">
       <main class="pa3 cf center">
         <h2 class="tc">Beagan Calendar</h2>
-        <p class="tc">Day ${dayOfYearDisplay} of ${state.now.getFullYear()}</p>
+        <p class="tc">Day ${(dayOfYearDisplay + percentOfTheDay).toFixed(3)} of ${state.now.getFullYear()}</p>
         <table class="center">${state.weeks.map((it) => row(it.weekNum, it))}</table>
       </main>
     </body>
